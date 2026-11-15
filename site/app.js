@@ -42,6 +42,7 @@
   }
   document.querySelectorAll('a[href="methods.html"]').forEach((a) => (a.href = "methods.html?fire=" + fid));
   $("tab-nisar").hidden = !N;
+  if (tot.roads_in_zone.length) $("addr").placeholder = tot.roads_in_zone[0].name;
 
   /* ---------- map ---------- */
   const map = new maplibregl.Map({
@@ -523,12 +524,12 @@
     map.fitBounds([fire.focus.slice(0, 2), fire.focus.slice(2)], { padding: 50, duration: 800 });
     if (O) {
       fadeTo("optical", 1);
-      say(`${day(O.date)}, day ${daysBetween(fire.dates.ignition, O.date)} of the fire. An ordinary satellite camera sees smoke.`);
+      say(`${day(O.date)}, day ${daysBetween(fire.dates.ignition, O.date)} of the fire. ${O.haze_share >= 0.3 ? "An ordinary satellite camera sees smoke." : `An ordinary satellite camera: ${pct(O.haze_share)} of the view is smoke or cloud.`}`);
       if (await wait(4200)) return;
     }
     if (R) {
       fadeTo("radar", 1); fadeTo("optical", 0);
-      say(`Radar sees through it. Sentinel-1, ${day(R.date)}.`);
+      say(`Radar sees through smoke and cloud. Sentinel-1, ${day(R.date)}.`);
       if (await wait(3800)) return;
     }
     setLayers({ burn: true });

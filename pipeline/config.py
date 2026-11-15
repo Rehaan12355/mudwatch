@@ -22,6 +22,20 @@ FIRES = {
         "why": "The East Evans Creek Fire burned steep, forested ridges above the homes strung along East Evans Creek and its side "
                "valleys north of Wimer and the town of Rogue River. It sits west of the Cascades, where the autumn rains arrive weeks after the fire season ends.",
     },
+    "bradeen-hill": {
+        "name": "Bradeen Hill Fire, Washington",
+        "short_name": "Bradeen Hill",
+        "usgs_fire": "Bradeen Hill",
+        "state": "Washington",
+        "county": "Stevens County",
+        "state_fips": "53",
+        "counties": {"065": "Stevens County"},
+        "utm_epsg": 32611,
+        "nws_office": "Spokane",
+        "nws_url": "https://www.weather.gov/otx/",
+        "why": "The Bradeen Hill Fire burned forested hills above Lake Roosevelt between Daisy and Gifford in Stevens County. "
+               "Homes sit along Daisy Mine Road and State Route 25 at the foot of those hills.",
+    },
 }
 
 FIRE_ID = os.environ.get("MW_FIRE", "east-evans-creek")

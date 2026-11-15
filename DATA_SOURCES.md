@@ -6,6 +6,16 @@ is unavailable the site says so instead of showing a value.
 
 | Key | Dataset | Retrieved | Size | Licence | Status |
 |---|---|---|---|---|---|
+| `bradeen-hill/census_blocks` | Bradeen Hill: 2020 Census blocks with population and housing units | 2026-11-14 | n/a | US Government work, public domain | ok |
+| `bradeen-hill/hls_true_colour` | Bradeen Hill: NASA HLS true-colour image, Landsat, 2026-08-10 | 2026-11-14 | 0.05 MB | NASA open data (CC0); contains modified Copernicus Sentinel data, ESA | ok |
+| `bradeen-hill/nasadem_n48w118` | Bradeen Hill: NASADEM merged DEM, 1 arc-second, tile NASADEM_HGT_n48w118.zip | 2026-11-14 | 13.37 MB | NASA open data (CC0) | ok |
+| `bradeen-hill/nasadem_n48w119` | Bradeen Hill: NASADEM merged DEM, 1 arc-second, tile NASADEM_HGT_n48w119.zip | 2026-11-14 | 13.95 MB | NASA open data (CC0) | ok |
+| `bradeen-hill/nisar_gcov` | Bradeen Hill: NISAR L2 GCOV L-band backscatter, track/frame 143 D 064, 2026-07-06, 2026-07-18, 2026-10-10, 2026-10-22, study-window subset | 2026-11-14 | n/a | NASA open data (CC0); NASA-ISRO NISAR mission | ok |
+| `bradeen-hill/opera_dist_alert_s1` | Bradeen Hill: NASA OPERA L3 DIST-ALERT-S1 v1 availability check | 2026-11-14 | n/a | NASA open data (CC0) | not yet available for this fire |
+| `bradeen-hill/opera_rtc_s1` | Bradeen Hill: NASA OPERA L2 RTC-S1 v1 radar backscatter, 29 Sentinel-1 passes 20260529 to 20261108, study-window subset | 2026-11-14 | n/a | NASA open data (CC0); contains modified Copernicus Sentinel-1 data, ESA | ok |
+| `bradeen-hill/osm` | Bradeen Hill: OpenStreetMap roads and place names | 2026-11-14 | 1.00 MB | ODbL 1.0, (c) OpenStreetMap contributors | ok |
+| `bradeen-hill/usa_structures` | Bradeen Hill: USA Structures building inventory (FEMA and Oak Ridge National Laboratory) | 2026-11-14 | n/a | Public domain (US Government work) | ok |
+| `bradeen-hill/usgs_pwfdf` | Bradeen Hill: USGS post-wildfire debris-flow hazard assessment, Bradeen Hill_2026-07-25_v1.0 | 2026-11-14 | 0.44 MB | US Government work, public domain | ok |
 | `east-evans-creek/census_blocks` | East Evans Creek: 2020 Census blocks with population and housing units | 2026-11-14 | n/a | US Government work, public domain | ok |
 | `east-evans-creek/hls_true_colour` | East Evans Creek: NASA HLS true-colour image, Landsat, 2026-07-15 | 2026-11-14 | 0.20 MB | NASA open data (CC0); contains modified Copernicus Sentinel data, ESA | ok |
 | `east-evans-creek/nasadem_n42w123` | East Evans Creek: NASADEM merged DEM, 1 arc-second, tile NASADEM_HGT_n42w123.zip | 2026-11-14 | 13.83 MB | NASA open data (CC0) | ok |
@@ -16,9 +26,30 @@ is unavailable the site says so instead of showing a value.
 | `east-evans-creek/osm` | East Evans Creek: OpenStreetMap roads and place names | 2026-11-14 | 3.43 MB | ODbL 1.0, (c) OpenStreetMap contributors | ok |
 | `east-evans-creek/usa_structures` | East Evans Creek: USA Structures building inventory (FEMA and Oak Ridge National Laboratory) | 2026-11-14 | n/a | Public domain (US Government work) | ok |
 | `east-evans-creek/usgs_pwfdf` | East Evans Creek: USGS post-wildfire debris-flow hazard assessment, East Evans Creek_2026-07-10_v1.0 | 2026-11-14 | 1.09 MB | US Government work, public domain | ok |
+| `three-queens/usgs_pwfdf` | Three Queens: USGS post-wildfire debris-flow hazard assessment, Three Queens_2026-07-16_v1.0 | 2026-11-14 | 0.74 MB | US Government work, public domain | ok |
 
 ## URLs and notes
 
+- **`bradeen-hill/census_blocks`**: <https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Tracts_Blocks/MapServer/12/query>  
+  TIGERweb layer 'Census 2020 > Census Blocks', fields POP100 and HU100, every block touching the study window (79 blocks).
+- **`bradeen-hill/hls_true_colour`**: <https://wvs.earthdata.nasa.gov/api/v1/snapshot?REQUEST=GetSnapshot&TIME=2026-08-10&BBOX=48.27369,-118.16834,48.42459,-117.99296&CRS=EPSG:4326&LAYERS=HLS_L30_Nadir_BRDF_Adjusted_Reflectance&FORMAT=image/jpeg&WIDTH=882&HEIGHT=1106>  
+  NASA Worldview Snapshots (GIBS). The haziest of 11 usable views in the 21 days after ignition; 19% of it is smoke or cloud.
+- **`bradeen-hill/nasadem_n48w118`**: <https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/NASADEM_HGT.001/NASADEM_HGT_n48w118/NASADEM_HGT_n48w118.zip>  
+  Short name NASADEM_HGT v001 at NASA LP DAAC, doi:10.5067/MEaSUREs/NASADEM/NASADEM_HGT.001.
+- **`bradeen-hill/nasadem_n48w119`**: <https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/NASADEM_HGT.001/NASADEM_HGT_n48w119/NASADEM_HGT_n48w119.zip>  
+  Short name NASADEM_HGT v001 at NASA LP DAAC, doi:10.5067/MEaSUREs/NASADEM/NASADEM_HGT.001.
+- **`bradeen-hill/nisar_gcov`**: <https://search.asf.alaska.edu/#/?dataset=NISAR&productTypes=GCOV>  
+  Short names NISAR_L2_GCOV_V1, NISAR_L2_GCOV_PROVISIONAL_V1 at the Alaska Satellite Facility DAAC (Earthdata login). Only the study window of the HV layer was read from each ~5 GB file (27 MB kept in data/work/). Granules: NISAR_L2_PR_GCOV_024_143_D_064_4005_DHDH_A_20260706T030137_20260706T030212_P05023_N_F_J_001; NISAR_L2_PR_GCOV_025_143_D_064_4005_DHDH_A_20260718T030136_20260718T030211_P05023_N_F_J_001; NISAR_L2_PR_GCOV_032_143_D_064_4005_DHDH_A_20261010T030134_20261010T030209_P05023_N_F_J_001; NISAR_L2_PR_GCOV_033_143_D_064_4005_DHDH_A_20261022T030134_20261022T030209_P05036_N_F_J_001
+- **`bradeen-hill/opera_dist_alert_s1`**: <https://search.asf.alaska.edu/#/?dataset=OPERA-S1&productTypes=DIST-ALERT-S1>  
+  8 granules over the study window, acquired 2026-01-02 to 2026-02-26; 0 acquisition dates on or after ignition (2026-07-25). Until the archive reaches the fire, the scar is drawn from OPERA RTC-S1, the backscatter product DIST-ALERT-S1 is itself made from.
+- **`bradeen-hill/opera_rtc_s1`**: <https://search.asf.alaska.edu/#/?dataset=OPERA-S1&productTypes=RTC>  
+  Short name OPERA_L2_RTC-S1_V1 at the Alaska Satellite Facility DAAC (Earthdata login). VH, VV and mask layers of 88 burst files on tracks 093, 166; only the study window was read (50 MB kept in data/work/bradeen-hill/rtc/).
+- **`bradeen-hill/osm`**: <https://overpass-api.de/api/interpreter>  
+  Used to label blocks with a road and a nearby place, and to measure road length inside mud paths.
+- **`bradeen-hill/usa_structures`**: <https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0>  
+  3155 buildings in and around the study window; occupancy class and centre point used.
+- **`bradeen-hill/usgs_pwfdf`**: <https://www.sciencebase.gov/catalog/item/6aaaef531ba49b8ae256e816>  
+  Looked up by fire name in https://earthquake.usgs.gov/arcgis/rest/services/ls/pwfdf/MapServer (layer 0). Assessment dated 2026-09-16; fire start 2026-07-25. Shapefiles: perimeter, 54 basins, 496 stream segments. Part of the PWFDF collection, doi:10.5066/P14EWYME.
 - **`east-evans-creek/census_blocks`**: <https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Tracts_Blocks/MapServer/12/query>  
   TIGERweb layer 'Census 2020 > Census Blocks', fields POP100 and HU100, every block touching the study window (310 blocks).
 - **`east-evans-creek/hls_true_colour`**: <https://wvs.earthdata.nasa.gov/api/v1/snapshot?REQUEST=GetSnapshot&TIME=2026-07-15&BBOX=42.53993,-123.08683,42.71998,-122.79872&CRS=EPSG:4326&LAYERS=HLS_L30_Nadir_BRDF_Adjusted_Reflectance&FORMAT=image/jpeg&WIDTH=1574&HEIGHT=1334>  
@@ -39,3 +70,5 @@ is unavailable the site says so instead of showing a value.
   14928 buildings in and around the study window; occupancy class and centre point used.
 - **`east-evans-creek/usgs_pwfdf`**: <https://www.sciencebase.gov/catalog/item/6af460821ba49b1bd080d887>  
   Looked up by fire name in https://earthquake.usgs.gov/arcgis/rest/services/ls/pwfdf/MapServer (layer 0). Assessment dated 2026-11-11; fire start 2026-07-10. Shapefiles: perimeter, 150 basins, 1206 stream segments. Part of the PWFDF collection, doi:10.5066/P14EWYME.
+- **`three-queens/usgs_pwfdf`**: <https://www.sciencebase.gov/catalog/item/6ac67bac1ba49b68a3bda5f8>  
+  Looked up by fire name in https://earthquake.usgs.gov/arcgis/rest/services/ls/pwfdf/MapServer (layer 0). Assessment dated 2026-10-07; fire start 2026-07-16. Shapefiles: perimeter, 96 basins, 758 stream segments. Part of the PWFDF collection, doi:10.5066/P14EWYME.

@@ -28,6 +28,29 @@ The fire started on July 10, 2026. Every figure below is produced by the pipelin
 - **NISAR sees it too.** NISAR's L-band HV echo fell by a median of 3.3 dB over the
   Sentinel-1 scar and 0.2 dB over the rest of the window.
 
+## What it found: Bradeen Hill Fire, Stevens County, Washington
+
+The fire started on July 25, 2026, in forested hills above Lake Roosevelt. The result
+here is weaker than in Oregon, and the site shows that as it is.
+
+- Radar confirmed the first scar on August 11, day 17, and 1,011 acres (4.1 km²) by
+  November 8 over 18 passes. That is 18% of the official perimeter, and 79% of the
+  radar scar falls inside it.
+- 139 acres are burned and 23° or steeper.
+- **11 homes, about 28 people, sit in a possible mud path**, mostly along Daisy Mine
+  Road and State Route 25. The first was flagged on August 23, 24 days before the
+  USGS assessment dated September 16.
+- 42 of 54 USGS basins get the same answer from both. We miss 10 of the 16 basins
+  USGS rates Moderate. Our red-zone share tracks the USGS terrain term (Spearman
+  0.53) but not its final likelihood (0.14).
+- Smoke was not the obstacle here: an optical satellite had a clear view two days
+  after ignition.
+- NISAR's L-band HV echo fell by a median of 3.0 dB over the scar and 0.5 dB elsewhere.
+
+Not every fire works. On the Three Queens Fire (Kittitas County, Washington) the burn
+did not darken the Sentinel-1 picture at all, so the rule found almost nothing and
+that fire is not on the site.
+
 ## One change from the plan
 
 The handout names NASA OPERA **DIST-ALERT-S1** as the main burn-scar source. Its archive
