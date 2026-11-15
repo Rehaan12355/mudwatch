@@ -22,19 +22,6 @@ FIRES = {
         "why": "The East Evans Creek Fire burned steep, forested ridges above the homes strung along East Evans Creek and its side "
                "valleys north of Wimer and the town of Rogue River. It sits west of the Cascades, where the autumn rains arrive weeks after the fire season ends.",
     },
-    "three-queens": {
-        "name": "Three Queens Fire, Washington",
-        "short_name": "Three Queens",
-        "usgs_fire": "Three Queens",
-        "state": "Washington",
-        "county": "Kittitas County",
-        "state_fips": "53",
-        "counties": {"037": "Kittitas County"},
-        "utm_epsg": 32610,
-        "nws_office": "Pendleton",
-        "nws_url": "https://www.weather.gov/pdt/",
-        "why": "",
-    },
 }
 
 FIRE_ID = os.environ.get("MW_FIRE", "east-evans-creek")
