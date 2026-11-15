@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>How Mudslide Watch works</title>
-<meta name="description" content="The data, the method and the limits behind Mudslide Watch.">
+<title>How Mudwatch works</title>
+<meta name="description" content="The data, the method and the limits behind Mudwatch.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -47,7 +47,7 @@
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="./"><svg viewBox="0 0 22 22" width="22" height="22" aria-hidden="true"><path d="M11 3 20 8l-9 5-9-5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="m2 11.5 9 5 9-5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" opacity=".6"/><path d="m2 15 9 5 9-5" fill="none" stroke="#e5482d" stroke-width="1.6" stroke-linejoin="round"/></svg>Mudslide Watch</a>
+  <a class="brand" href="./"><svg viewBox="0 0 22 22" width="22" height="22" aria-hidden="true"><path d="M11 3 20 8l-9 5-9-5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="m2 11.5 9 5 9-5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" opacity=".6"/><path d="m2 15 9 5 9-5" fill="none" stroke="#e5482d" stroke-width="1.6" stroke-linejoin="round"/></svg>Mudwatch</a>
   <span class="place" id="place"></span>
   <nav class="top-actions"><a class="btn btn-solid" id="back" href="./">Open the map</a></nav>
 </header>
@@ -70,13 +70,13 @@
   const d = f.dates, k = f.scar_check, m = f.scar_method, r = f.rule, t = f.totals, C = f.usgs_check, N = f.nisar && f.nisar.ok ? f.nisar : null, O = f.optical && f.optical.ok ? f.optical : null, P = f.people;
   document.getElementById("place").textContent = f.name;
   document.getElementById("back").href = "./?fire=" + fid;
-  document.title = `How Mudslide Watch works: ${f.short_name}`;
+  document.title = `How Mudwatch works: ${f.short_name}`;
   const row = (dt, dd, hot) => `<div><dt>${dt}</dt><dd${hot ? ' class="hot"' : ""}>${dd}</dd></div>`;
 
   document.getElementById("doc").innerHTML = `
   <section class="lead">
     <h1>Cameras see ${O ? `<span class="chip" style="background-image:url(${D}optical.jpg)" role="img" aria-label="Optical satellite picture of the smoke plume"></span>` : ""} smoke. Radar sees ${f.radar_picture ? `<span class="chip" style="background-image:url(${D}radar.png)" role="img" aria-label="Radar picture of the same hills"></span>` : ""} the ground.</h1>
-    <p>After a wildfire, the next heavy rain can send mud, rock and burned trees down onto whatever sits below. Mudslide Watch asks one question of three layers: where does burned ground meet steep ground above homes?</p>
+    <p>After a wildfire, the next heavy rain can send mud, rock and burned trees down onto whatever sits below. Mudwatch asks one question of three layers: where does burned ground meet steep ground above homes?</p>
   </section>
 
   <section class="row">

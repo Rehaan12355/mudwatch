@@ -11,7 +11,7 @@ import requests
 from config import CITY, RAW, ROOT
 
 SOURCES_JSON = ROOT / "data" / "sources.json"
-UA = {"User-Agent": "mudslide-watch-spaceapps/1.0"}
+UA = {"User-Agent": "mudwatch-spaceapps/1.0"}
 
 
 def _load_sources():

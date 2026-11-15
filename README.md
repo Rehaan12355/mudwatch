@@ -1,8 +1,8 @@
-# Mudslide Watch
+# Mudwatch
 
 **NASA Space Apps Challenge 2026 · Seattle · "Dancing with the SARs"**
 
-After a wildfire, the next heavy rain can bury homes in mud. Mudslide Watch uses radar
+After a wildfire, the next heavy rain can bury homes in mud. Mudwatch uses radar
 satellites to show which homes sit below fresh burn scars on steep slopes, fast enough
 to warn people before the rain comes.
 

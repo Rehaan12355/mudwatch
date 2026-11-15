@@ -1,6 +1,6 @@
-# Design System: Mudslide Watch
+# Design System: Mudwatch
 
-The single source of truth for how Mudslide Watch looks and behaves. The product is
+The single source of truth for how Mudwatch looks and behaves. The product is
 one map for three audiences: a resident checking their street, a county planner, and a
 hackathon judge with thirty seconds. Every number on screen comes from the pipeline.
 Nothing in the interface is decorative data.

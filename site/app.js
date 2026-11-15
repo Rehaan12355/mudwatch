@@ -1,4 +1,4 @@
-/* Mudslide Watch: static front end. All numbers come from site/data/, built by pipeline/. */
+/* Mudwatch: static front end. All numbers come from site/data/, built by pipeline/. */
 (async function () {
   const $ = (id) => document.getElementById(id);
   const fmt = (n) => Math.round(n).toLocaleString("en-US");
@@ -33,7 +33,7 @@
 
   const state = { view: "watch", idx: K - 1, fade: 100, layers: { burn: true, slope: true, people: true }, selected: null, playing: null };
   const all = () => state.layers.burn && state.layers.slope && state.layers.people;
-  document.title = `Mudslide Watch: ${fire.name}`;
+  document.title = `Mudwatch: ${fire.name}`;
   if (fires.length > 1) {
     $("place").innerHTML = `<label class="sr-only" for="fire-pick">Fire</label><select id="fire-pick">${fires.map((f) => `<option value="${f.id}"${f.id === fid ? " selected" : ""}>${f.name}</option>`).join("")}</select>`;
     $("fire-pick").onchange = (e) => (location.search = "?fire=" + e.target.value);
@@ -403,7 +403,7 @@
     const lines = blocks.features.map((f) => cols.map((c) => { const v = f.properties[c]; return v == null ? "" : typeof v === "string" ? `"${v.replace(/"/g, '""')}"` : v; }).join(","));
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([head + "\n" + lines.join("\n")], { type: "text/csv" }));
-    a.download = "mudslide-watch-" + fire.id + ".csv";
+    a.download = "mudwatch-" + fire.id + ".csv";
     a.click();
   }
 
