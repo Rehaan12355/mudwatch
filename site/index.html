@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mudslide Watch</title>
+<meta name="description" content="After a wildfire, the next heavy rain can send mud downhill. Mudslide Watch uses NASA radar to show which homes sit below fresh burn scars on steep slopes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<link href="styles.css" rel="stylesheet">
+</head>
+<body class="loading">
+<header class="top">
+  <a class="brand" href="./"><svg viewBox="0 0 22 22" width="22" height="22" aria-hidden="true"><path d="M11 3 20 8l-9 5-9-5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="m2 11.5 9 5 9-5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" opacity=".6"/><path d="m2 15 9 5 9-5" fill="none" stroke="#e5482d" stroke-width="1.6" stroke-linejoin="round"/></svg>Mudslide Watch</a>
+  <span class="place" id="place"></span>
+  <nav class="top-actions">
+    <button id="open-check" class="link" type="button">Check the science</button>
+    <a class="link" href="methods.html">How it works</a>
+    <button id="story" class="btn btn-solid" type="button"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 2.5v11l9.5-5.5z" fill="currentColor"/></svg>Play the story</button>
+  </nav>
+</header>
+
+<main class="stage">
+  <div class="mapwrap">
+    <div id="map" aria-label="Map of the burn area"></div>
+    <div id="caption" class="caption" hidden></div>
+    <div id="legend" class="legend"></div>
+  </div>
+
+  <aside class="panel" aria-label="Controls and details">
+    <div class="views" role="tablist" aria-label="Map view">
+      <button role="tab" aria-selected="true" data-view="watch">Homes at risk</button>
+      <button role="tab" aria-selected="false" data-view="usgs">Expert check</button>
+      <button role="tab" aria-selected="false" data-view="nisar" id="tab-nisar" hidden>Second satellite</button>
+    </div>
+
+    <div id="loading" class="skeleton" aria-label="Loading the map data">
+      <i style="height:1.9rem;width:80%"></i><i style="height:1.9rem;width:55%"></i><i style="height:0.9rem;width:100%"></i><i style="height:0.9rem;width:70%"></i>
+      <i style="height:3rem;width:100%;margin-top:1.2rem"></i><i style="height:3rem;width:100%"></i><i style="height:3rem;width:100%"></i>
+    </div>
+
+    <section id="overview">
+      <h1 id="headline"></h1>
+      <p id="subhead" class="lede"></p>
+
+      <form id="find" class="find" autocomplete="off">
+        <label for="addr">Is your home one of them? Check a street or address</label>
+        <div class="find-row"><input id="addr" type="search" placeholder="East Evans Creek Road"><button class="btn" type="submit">Check</button></div>
+        <p id="find-msg" class="find-msg" role="status"></p>
+      </form>
+
+      <h2 id="rank-title"></h2>
+      <ol id="rank" class="rank"></ol>
+      <div id="extra"></div>
+      <p id="rank-note" class="hint"></p>
+
+      <div id="how">
+        <h2>How the map works: three layers</h2>
+        <p class="hint how-lede">Switch each one off and on to see what it adds. Red appears only where all three line up.</p>
+        <div class="stack" id="stack" role="group" aria-label="Map layers">
+          <div class="plates" aria-hidden="true">
+            <i class="plate p-burn"></i><i class="plate p-slope"></i><i class="plate p-people"></i><i class="core"></i>
+          </div>
+          <div class="stack-keys">
+            <button type="button" class="layer" data-layer="burn" aria-pressed="true"><b>Burned area</b><span>Where did the fire burn?</span></button>
+            <button type="button" class="layer" data-layer="slope" aria-pressed="false"><b>Steep ground</b><span>Is it steep enough to slide?</span></button>
+            <button type="button" class="layer" data-layer="people" aria-pressed="false"><b>Homes</b><span>Who lives below?</span></button>
+          </div>
+        </div>
+        <p id="stack-says" class="stack-says"></p>
+      </div>
+    </section>
+
+    <section id="card" class="card" hidden aria-live="polite"></section>
+  </aside>
+</main>
+
+<footer class="strip">
+  <div class="strip-date">
+    <div><output id="date-label" for="slider">–</output><span id="pass-label" class="pass-label"></span></div>
+    <button id="play" class="btn btn-round invite" type="button" aria-label="Play"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 2.5v11l9.5-5.5z" fill="currentColor"/></svg></button>
+  </div>
+  <div class="strip-slider">
+    <p id="slider-hint" class="slider-hint">Drag to go back in time and watch the satellite map the burn, or press play</p>
+    <input id="slider" type="range" min="0" max="1" value="0" step="1" aria-label="Radar pass">
+    <div id="ticks" class="ticks" aria-hidden="true"></div>
+  </div>
+  <div class="strip-count">
+    <strong id="count">–</strong>
+    <span id="count-label"></span>
+  </div>
+</footer>
+
+<dialog id="check" class="check">
+  <form method="dialog"><button class="btn close" aria-label="Close">Close</button></form>
+  <div id="check-body"></div>
+</dialog>
+
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Mudslide Watch works</title>
+<meta name="description" content="The data, the method and the limits behind Mudslide Watch.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="styles.css" rel="stylesheet">
+<style>
+  body { display: block; height: auto; background: var(--sheet); }
+  .doc { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem 5rem; }
+  .lead { display: grid; grid-template-columns: 7fr 5fr; gap: clamp(1.5rem, 4vw, 4rem); align-items: end; padding: clamp(2.5rem, 7vw, 5.5rem) 0 clamp(2rem, 5vw, 3.5rem); border-bottom: 1px solid var(--seam); }
+  .lead h1 { font-size: clamp(2.1rem, 5.2vw, 3.9rem); line-height: 1.04; letter-spacing: -0.045em; }
+  /* Pictures at type height, set between the words they belong to */
+  .chip { display: inline-block; height: 0.78em; aspect-ratio: 1.9; border-radius: 0.2em; background-size: cover; background-position: 50% 40%; vertical-align: -0.04em; margin: 0 0.06em; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14); }
+  .lead p { color: var(--ash); font-size: 1.05rem; max-width: 40ch; margin: 0; }
+  .row { display: grid; grid-template-columns: 7fr 5fr; gap: clamp(1.5rem, 4vw, 4rem); padding: clamp(2rem, 5vw, 3.5rem) 0; border-bottom: 1px solid var(--seam); align-items: start; }
+  .row.flip { grid-template-columns: 5fr 7fr; }
+  .row.flip > :first-child { order: 2; }
+  .row h2 { font-size: 1.55rem; font-weight: 700; letter-spacing: -0.03em; margin: 0 0 0.8rem; }
+  .row p, .row li { max-width: 62ch; color: #d4d4d8; }
+  .row ol, .row ul { padding-left: 1.2rem; }
+  .row li { margin-top: 0.45rem; }
+  .row figure { margin: 0; }
+  .row figure img { display: block; width: 100%; border-radius: 12px; border: 1px solid var(--seam); background: var(--soot); }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+  figcaption { font-size: 0.82rem; color: var(--ash); margin-top: 0.5rem; }
+  .nums { margin: 0; padding: 0; }
+  .nums div { display: grid; grid-template-columns: 1fr auto; gap: 1rem; padding: 0.6rem 0; border-top: 1px solid var(--seam); }
+  .nums div:first-child { border-top: 0; padding-top: 0; }
+  .nums dt { color: var(--ash); font-size: 0.9rem; }
+  .nums dd { margin: 0; font: 500 0.95rem var(--mono); text-align: right; white-space: nowrap; }
+  .nums dd.hot { color: var(--cinder); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { color: var(--ash); font-weight: 500; }
+  th, td { text-align: left; vertical-align: top; padding: 0.55rem 0.9rem 0.55rem 0; border-top: 1px solid var(--seam); }
+  code { font: 0.85em var(--mono); color: var(--bone); }
+  @media (max-width: 767px) {
+    .lead, .row, .row.flip { grid-template-columns: 1fr; }
+    .row.flip > :first-child { order: 0; }
+    .chip { display: none; }
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="./"><svg viewBox="0 0 22 22" width="22" height="22" aria-hidden="true"><path d="M11 3 20 8l-9 5-9-5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="m2 11.5 9 5 9-5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" opacity=".6"/><path d="m2 15 9 5 9-5" fill="none" stroke="#e5482d" stroke-width="1.6" stroke-linejoin="round"/></svg>Mudslide Watch</a>
+  <span class="place" id="place"></span>
+  <nav class="top-actions"><a class="btn btn-solid" id="back" href="./">Open the map</a></nav>
+</header>
+
+<main class="doc" id="doc"><p class="lede" style="padding:3rem 0">Loading the method…</p></main>
+
+<script>
+(async function () {
+  const fmt = (n) => Math.round(n).toLocaleString("en-US");
+  const pct = (x) => Math.round(x * 100) + "%";
+  const acres = (km2) => fmt(km2 * 247.105);
+  const M = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const day = (iso) => `${M[+iso.slice(5, 7) - 1]} ${+iso.slice(8, 10)}`;
+  const between = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 864e5);
+  const fires = await fetch("data/fires.json").then((r) => r.json());
+  const asked = new URLSearchParams(location.search).get("fire");
+  const fid = fires.some((f) => f.id === asked) ? asked : fires[0].id;
+  const D = `data/${fid}/`;
+  const f = await fetch(D + "fire.json").then((r) => r.json());
+  const d = f.dates, k = f.scar_check, m = f.scar_method, r = f.rule, t = f.totals, C = f.usgs_check, N = f.nisar && f.nisar.ok ? f.nisar : null, O = f.optical && f.optical.ok ? f.optical : null, P = f.people;
+  document.getElementById("place").textContent = f.name;
+  document.getElementById("back").href = "./?fire=" + fid;
+  document.title = `How Mudslide Watch works: ${f.short_name}`;
+  const row = (dt, dd, hot) => `<div><dt>${dt}</dt><dd${hot ? ' class="hot"' : ""}>${dd}</dd></div>`;
+
+  document.getElementById("doc").innerHTML = `
+  <section class="lead">
+    <h1>Cameras see ${O ? `<span class="chip" style="background-image:url(${D}optical.jpg)" role="img" aria-label="Optical satellite picture of the smoke plume"></span>` : ""} smoke. Radar sees ${f.radar_picture ? `<span class="chip" style="background-image:url(${D}radar.png)" role="img" aria-label="Radar picture of the same hills"></span>` : ""} the ground.</h1>
+    <p>After a wildfire, the next heavy rain can send mud, rock and burned trees down onto whatever sits below. Mudslide Watch asks one question of three layers: where does burned ground meet steep ground above homes?</p>
+  </section>
+
+  <section class="row">
+    <div>
+      <h2>What it does, and what it does not</h2>
+      <p>It is a screen. It marks ground that the radar says burned and that is ${r.steep_deg} degrees or steeper, follows the channels below that ground downhill, and counts the homes in the way. It says where mud <em>could</em> arrive. It does not say that it will, when, or how much.</p>
+      <p>The U.S. Geological Survey already publishes post-fire debris-flow hazard assessments, built on measured burn severity, soils and design rainstorms. That is the expert version and we check ourselves against it below. What this adds is an early look through smoke, a focus on the wetter Pacific Northwest, and a map a resident can read for their own street.</p>
+    </div>
+    <dl class="nums">
+      ${row("Fire starts", day(d.ignition))}
+      ${row("Radar confirms the first scar", `${day(d.first_scar)}, day ${between(d.ignition, d.first_scar)}`)}
+      ${row("First home flagged below it", `${day(d.first_home)}, day ${between(d.ignition, d.first_home)}`)}
+      ${O && O.first_clear_view ? row("First clear optical view of the whole area", `${day(O.first_clear_view)}, day ${between(d.ignition, O.first_clear_view)}`) : ""}
+      ${row("USGS assessment is dated", `${day(d.usgs_assessment)}, day ${between(d.ignition, d.usgs_assessment)}`)}
+      ${row("Homes in a possible mud path today", `${t.homes_in_zone}, about ${t.people_in_zone} people`, true)}
+    </dl>
+  </section>
+
+  <section class="row flip">
+    <figure>
+      <div class="pair">${O ? `<img src="${D}optical.jpg" alt="True-colour satellite picture with a smoke plume covering the fire" loading="lazy">` : ""}${f.radar_picture ? `<img src="${D}radar.png" alt="Radar picture of the same area with the terrain fully visible" loading="lazy">` : ""}</div>
+      <figcaption>${O ? `Left: NASA HLS true colour from ${O.satellite}, ${day(O.date)}. ${pct(O.haze_share)} of the picture is smoke or cloud.` : ""} ${f.radar_picture ? `Right: Sentinel-1 radar, ${day(f.radar_picture.date)}, same area.` : ""}</figcaption>
+    </figure>
+    <div>
+      <h2>Layer one: the burn scar, by radar</h2>
+      <p>Radar makes its own light and its waves pass through smoke and cloud, so it maps a fire while the fire is still burning. A forest that burns loses the leaves and twigs that scatter radar back to the satellite, and goes darker.</p>
+      <p>We use NASA's OPERA RTC-S1 product: Sentinel-1 backscatter that has already been calibrated, terrain-corrected and gridded at 30 meters. For each of the ${f.timeline.length} passes after ignition, the picture is compared with that track's own average from the ${f.passes_before} passes in the two months before the fire.</p>
+      <ul>
+        <li>A cell joins the scar when ${m.looks} passes in a row average at least ${m.drop_db} dB darker than before.</li>
+        <li>Only ground that looked tree-covered to the radar before the fire can join. Fields darken and brighten with the seasons.</li>
+        <li>Isolated patches under ${m.min_patch_ha} hectares are dropped.</li>
+      </ul>
+      <p>${f.dist && !f.dist.available_for_fire ? `The plan was to read the scar straight from NASA's OPERA DIST-ALERT-S1 disturbance alerts, released on October 27, 2026. Its archive covers ${day(f.dist.first_date)} to ${day(f.dist.last_date)} over this area so far and does not reach this fire. RTC-S1 is the product those alerts are made from, and the confirm-over-several-passes rule is borrowed from them. When the archive catches up, the scar should come from the alerts themselves.` : ""}</p>
+    </div>
+  </section>
+
+  <section class="row">
+    <div>
+      <h2>Layer two: slope</h2>
+      <p>Elevation is NASADEM, NASA's reprocessed Shuttle radar heights at about 30 meters. Slope is worked out for each cell from its eight neighbours. A cell counts as steep at ${r.steep_deg} degrees, the gradient the USGS likelihood model uses for its own terrain term.</p>
+      <p>Burned and steep together is a red zone: ${acres(t.red_km2)} acres here, ${pct(t.steep_share_of_scar)} of the radar scar.</p>
+      <h2 style="margin-top:2rem">Layer three: people</h2>
+      <p>Each 2020 Census block's population is shared equally among the homes mapped inside it, using the FEMA and Oak Ridge USA Structures building inventory. In each block the largest residential buildings are taken as homes, as many as the census counts housing units, because the inventory also lists garages and barns as residential. ${fmt(P.people_placed_on_homes)} of ${fmt(P.block_population)} people could be placed this way.</p>
+    </div>
+    <div>
+      <h2>From red zone to mud path</h2>
+      <ol>
+        <li>Small pits in the elevation model are filled, and each cell drains to its lowest neighbour.</li>
+        <li>A path starts where at least ${r.min_source_ha} hectare of red zone lies upstream.</li>
+        <li>It carries on downhill and ends once the channel has stayed flatter than ${r.runout_stop_deg} degrees for ${r.runout_flat_m} meters, or ${fmt(r.runout_max_m)} meters below the last red cell that feeds it.</li>
+        <li>The path is drawn ${r.path_half_width_m} meters either side of the channel. A home whose centre is inside a red zone or a path is counted. Homes within ${r.near_path_m} meters are listed as beside one.</li>
+      </ol>
+      <p>These distances are plain rules of thumb, chosen before looking at the result and not tuned to it.</p>
+    </div>
+  </section>
+
+  <section class="row flip">
+    <dl class="nums">
+      ${row("Radar scar inside the official perimeter", pct(k.share_of_scar_inside_perimeter))}
+      ${row("Official perimeter confirmed as scar", pct(k.share_of_perimeter_detected))}
+      ${row("False scar on passes before the fire", `${acres(k.prefire_false_alarm_km2)} of ${acres(k.window_km2)} acres`)}
+      ${row("Radar darkening against USGS burn severity", `rank agreement ${C.radar_vs_severity.spearman.toFixed(2)}`)}
+      ${row("Our red share against the USGS terrain term", `rank agreement ${C.red_vs_terrain.spearman.toFixed(2)}`)}
+      ${row("Steep and burned, share of basin area", `${(C.mean_red_share * 100).toFixed(1)}% ours, ${(C.mean_terrain_term * 100).toFixed(1)}% USGS`)}
+      ${row("Basins with the same answer", `${C.table.both + C.table.neither} of ${C.n_basins}`)}
+      ${row("Flagged only by us / only by USGS", `${C.table.only_ours} / ${C.table.only_usgs}`)}
+    </dl>
+    <div>
+      <h2>Checked against the experts</h2>
+      <p>The USGS assessment of this fire, dated ${day(d.usgs_assessment)}, was used three ways and never to tune the method. Its burn perimeter scores the radar scar. Its ${C.n_basins} basins score the red zones. Its hazard ratings, for a storm peaking at ${C.design_storm_mm_h} mm per hour over 15 minutes, score which basins we flag.</p>
+      <p>The radar confirms less than the whole perimeter. A perimeter encloses lightly burned and unburned ground too, and C-band radar mostly sees canopy loss, so light burns under intact trees are missed. That makes this screen miss some ground the USGS model counts: ${C.table.only_usgs} basins it rates Moderate or High have under ${r.min_source_ha} hectare of our red zone.</p>
+      <p>Where the two maps disagree, trust USGS. <a href="${f.usgs.sciencebase_url}" target="_blank" rel="noopener">Open the USGS assessment</a>.</p>
+    </div>
+  </section>
+
+  ${N ? `<section class="row">
+    <div>
+      <h2>The NISAR check</h2>
+      <p>NISAR, the NASA and ISRO radar this challenge is about, did not draw the scar. That makes it an independent second look. Its L-band waves are about four times longer than Sentinel-1's and reach deeper into a canopy.</p>
+      <p>We took its GCOV backscatter product on one track, two passes before ignition (${N.before_dates.map(day).join(" and ")}) and the two latest (${N.after_dates.map(day).join(" and ")}). Over the Sentinel-1 scar the HV echo fell by a median of ${Math.abs(N.change_in_scar_db).toFixed(1)} dB. Over the rest of the window it changed by ${N.change_outside_db.toFixed(1)} dB. ${pct(N.share_of_scar_darker)} of the scar is darker than unburned ground normally varies, against ${pct(N.share_of_unburned_darker)} outside it.</p>
+    </div>
+    <figure>
+      <div class="pair"><img src="${D}nisar_before.png" alt="NISAR radar picture before the fire" loading="lazy"><img src="${D}nisar_after.png" alt="NISAR radar picture after the fire, with the burned area darker" loading="lazy"></div>
+      <figcaption>NISAR L-band HV backscatter before the fire and after it. Same stretch on both pictures.</figcaption>
+    </figure>
+  </section>` : ""}
+
+  <section class="row flip">
+    <div>
+      <h2>Data</h2>
+      <table>
+        <tr><th>Layer</th><th>Source</th></tr>
+        <tr><td>Burn scar</td><td>NASA OPERA L2 RTC-S1 (Sentinel-1), Alaska Satellite Facility</td></tr>
+        <tr><td>NISAR check</td><td>NISAR L2 GCOV, Alaska Satellite Facility</td></tr>
+        <tr><td>Slope</td><td>NASADEM 1 arc-second, NASA LP DAAC</td></tr>
+        <tr><td>People</td><td>2020 Census blocks; USA Structures (FEMA, ORNL)</td></tr>
+        <tr><td>Ground truth</td><td>USGS post-wildfire debris-flow hazard assessment</td></tr>
+        <tr><td>Smoke picture</td><td>NASA HLS true colour, Worldview Snapshots</td></tr>
+        <tr><td>Names, roads</td><td>OpenStreetMap contributors</td></tr>
+      </table>
+      <p class="hint">Every file's address, retrieval date and licence is listed in <code>DATA_SOURCES.md</code> in the project.</p>
+    </div>
+    <div>
+      <h2>Limits</h2>
+      <ul>
+        <li>Burned and steep is a rough screen. It knows nothing about rainfall, soil, or how much material a slope can shed.</li>
+        <li>The radar misses light burns under intact canopy, and anything that was not tree-covered before the fire.</li>
+        <li>Logging or a landslide in the same months would look like burn to this method.</li>
+        <li>Paths are drawn narrow. Real flows spread on fans and can leave their channel at bends and culverts.</li>
+        <li>Ordinary flash flooding on the creeks, which also worsens after a fire, is not mapped.</li>
+        <li>The elevation model is 30 meters and from the year 2000. Small gullies, road cuts and new grading are invisible to it.</li>
+        <li>People are placed on buildings by a simple share. Counts are estimates, good to a handful.</li>
+        <li>One fire has been built so far. The numbers on this page describe that fire only.</li>
+      </ul>
+      <p class="hint">Built for the NASA Space Apps Challenge 2026, "Dancing with the SARs". Code and text were drafted with help from Claude (Anthropic). No values on this site are AI-generated: all are computed from the public sources above.</p>
+    </div>
+  </section>`;
+})().catch((e) => { console.error(e); document.getElementById("doc").innerHTML = '<p class="notice" style="margin-top:3rem">The data for this page did not load. Check your connection and reload.</p>'; });
+</script>
+</body>
+</html>
