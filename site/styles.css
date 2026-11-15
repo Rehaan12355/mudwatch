@@ -149,7 +149,7 @@ a { color: var(--bone); text-underline-offset: 0.18em; text-decoration-color: va
 .layer:hover { background: var(--recess); }
 .layer:active { transform: translateY(1px); }
 .stack-says { font-size: 0.9rem; color: #d4d4d8; min-height: 2.8em; margin: 0.6rem 0 0; }
-#how { margin-top: 2rem; padding-top: 0.25rem; border-top: 1px solid var(--seam); }
+#answer { margin-top: 1.6rem; padding-top: 1.4rem; border-top: 1px solid var(--seam); }
 #how .how-lede { margin: 0.35rem 0 0.9rem; }
 .stack-says b { color: var(--cinder); font-weight: 600; }
 

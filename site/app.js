@@ -338,7 +338,7 @@
         $("subhead").textContent = `By ${day(t.date)}, ${daysBetween(fire.dates.ignition, t.date)} days after the fire started, the satellite had not yet confirmed burned, steep ground above a home. Drag the slider at the bottom forward.`;
       } else {
         $("headline").textContent = "Who is below the burn?";
-        $("subhead").textContent = "Switch on all three layers below to see the homes that mud could reach after a heavy rainstorm.";
+        $("subhead").textContent = "Switch on all three layers above to see the homes that mud could reach after a heavy rainstorm.";
       }
       const top = !all() ? [] : rows.map((p) => ({ p, n: inPathNow(p.id) })).filter((r) => r.n > 0).sort((a, b) => b.n - a.n || b.p.people_in - a.p.people_in).slice(0, 7);
       $("rank-title").textContent = top.length ? "Where those homes are" : "";

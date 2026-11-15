@@ -66,9 +66,9 @@ warm greys mixed with cool greys. Printing a card switches to dark ink on white 
 
 ## 4. Component Stylings
 
-- **Reading order of the column:** the answer first, in plain words ("17 homes could
-  be in the path of a mudslide"), then the address check, then where those homes are,
-  and only then the layer stack as the explanation of how the map works. Labels use
+- **Reading order of the column:** the layer stack first, as the control and the
+  explanation of how the map works, then the answer in plain words ("17 homes could
+  be in the path of a mudslide"), the address check, and where those homes are. Labels use
   everyday words: "Burned area", "Steep ground", "Homes", "satellite pass".
 - **Home marker:** a real button on the map. Selecting it opens that home's block
   card; hover and selection invert it to white.
