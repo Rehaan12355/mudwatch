@@ -8,6 +8,8 @@ Outputs
 - nisar_before.png, nisar_after.png   NISAR L-band backscatter
 - optical.jpg         written by step 9
 - homes.geojson, blocks.geojson, perimeter.geojson, usgs_basins.geojson, usgs_segments.geojson
+- routes.geojson      ways out by road (cut = 1 where the road lies in a possible mud path)
+- clear_points.geojson  where a mud channel crosses a public road
 """
 import json
 
@@ -94,6 +96,11 @@ def main():
     for n in ("usgs_basins.geojson", "usgs_segments.geojson"):
         dump(gpd.read_file(WORK / n), n)
 
+    ways = load("routes.json")
+    for n in ("routes.geojson", "clear_points.geojson"):
+        gdf = gpd.read_file(WORK / n)
+        dump(gdf.assign(geometry=gdf.simplify(4)) if n == "routes.geojson" else gdf, n)
+
     st = gpd.read_file(WORK / "structures_zoned.gpkg")
     homes = st[st["home"]].copy()
     up = ndimage.maximum_filter(read("upstream_red_ha.tif"), size=3)
@@ -121,6 +128,7 @@ def main():
             "homes_near": int(s.get("homes_near", 0)), "people_near": round(s.get("people_near", 0.0)),
             "k": s.get("k") if s.get("k") is not None else -1, "status": status,
             "up_ha": round(float(inz["up_ha"].max()), 1) if len(inz) else 0.0,
+            "route": ways["blocks"].get(b["GEOID"], {}).get("route", -1), "route_km": ways["blocks"].get(b["GEOID"], {}).get("km", 0.0),
         })
     bg = gpd.GeoDataFrame(feats, geometry=blocks.simplify(8).values, crs=crs)
     dump(bg, "blocks.geojson")
@@ -141,6 +149,7 @@ def main():
         "totals": {k: zones[k] for k in ("scar_km2", "steep_share_of_scar", "red_km2", "path_km", "zone_km2", "homes_in_zone", "people_in_zone", "homes_near", "people_near",
                                         "other_buildings_in_zone", "homes_in_window", "people_in_window", "road_km_in_zone", "roads_in_zone", "blocks_with_homes_in_zone")},
         "people": people, "usgs_check": check, "nisar": nisar, "optical": optical, "radar_picture": radar_pic, "dist": dist,
+        "ways_out": {k: v for k, v in ways.items() if k != "blocks"},
     }
     (SITE_DATA / "fire.json").write_text(json.dumps(out, separators=(",", ":")))
     built = [{"id": fid, "name": f["name"], "short_name": f["short_name"]} for fid, f in FIRES.items() if (SITE_DATA.parent / fid / "fire.json").exists()]

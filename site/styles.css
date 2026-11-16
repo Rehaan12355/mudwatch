@@ -148,6 +148,8 @@ a { color: var(--bone); text-underline-offset: 0.18em; text-decoration-color: va
 .layer span { grid-column: 2; font-size: 0.82rem; line-height: 1.25; }
 .layer:hover { background: var(--recess); }
 .layer:active { transform: translateY(1px); }
+#routes-switch { margin-top: 1rem; padding-top: 0.6rem; border-top: 1px solid var(--seam); }
+#routes-switch .layer { width: 100%; }
 .stack-says { font-size: 0.9rem; color: #d4d4d8; min-height: 2.8em; margin: 0.6rem 0 0; }
 #answer { margin-top: 1.6rem; padding-top: 1.4rem; border-top: 1px solid var(--seam); }
 #how .how-lede { margin: 0.35rem 0 0.9rem; }
@@ -247,6 +249,47 @@ a { color: var(--bone); text-underline-offset: 0.18em; text-decoration-color: va
 }
 .home-pin:hover, .home-pin.sel { background: #fff; color: var(--cinder); }
 .home-pin svg { display: block; }
+/* Way-out label and first-responder clearing point */
+.exit-pin {
+  display: flex; align-items: center; gap: 0.3rem; cursor: pointer; white-space: nowrap;
+  padding: 0.2rem 0.55rem 0.2rem 0.4rem; border-radius: 999px; border: 0;
+  background: var(--bone); color: var(--sheet); font: 600 0.75rem var(--sans, inherit);
+  box-shadow: 0 2px 8px rgba(14, 14, 16, 0.7);
+}
+.clear-pin {
+  width: 28px; height: 28px; border-radius: 8px; cursor: pointer;
+  background: var(--raised); color: var(--bone); border: 2px solid var(--bone);
+  display: grid; place-items: center;
+  box-shadow: 0 2px 8px rgba(14, 14, 16, 0.7);
+}
+.clear-pin:hover { background: var(--bone); color: var(--sheet); }
+.clear-pin svg, .exit-pin svg { display: block; }
+.maplibregl-popup-content { background: var(--sheet); color: var(--bone); border: 1px solid var(--seam); border-radius: 12px; padding: 0.85rem 1rem; font-size: 0.85rem; line-height: 1.45; box-shadow: 0 8px 24px rgba(14, 14, 16, 0.6); }
+.maplibregl-popup-content p { margin: 0.4rem 0 0; }
+.maplibregl-popup-content .small { color: var(--ash); font-size: 0.78rem; }
+.maplibregl-popup-tip { display: none; }
+.maplibregl-popup-close-button { color: var(--ash); font-size: 1.1rem; padding: 0.15rem 0.45rem; }
+#ways, #clear { margin-top: 1.8rem; }
+.rank .num { display: inline-grid; place-items: center; min-width: 1.35rem; height: 1.35rem; margin-right: 0.5rem; border-radius: 5px; background: var(--raised); font: 500 0.75rem var(--mono); font-style: normal; }
+button.inline { background: none; border: 0; padding: 0; color: var(--bone); text-decoration: underline; cursor: pointer; font: inherit; }
+
+/* Who is using the map */
+.who { border-radius: 16px; padding: 1.75rem 2rem 2rem; width: min(40rem, 94vw); color: var(--bone); background: var(--sheet); border: 1px solid var(--seam); }
+.who::backdrop { background: rgba(14, 14, 16, 0.65); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
+.who h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.03em; margin: 0; }
+.who p { color: #d4d4d8; max-width: 52ch; margin: 0.5rem 0 1.25rem; }
+.who-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.who-pick button {
+  display: grid; gap: 0.4rem; justify-items: start; text-align: left; cursor: pointer;
+  padding: 1.1rem 1.1rem 1.2rem; border-radius: 12px; border: 1px solid var(--seam);
+  background: var(--recess); color: var(--bone); font: inherit;
+  transition: transform 0.25s var(--spring), border-color 0.25s var(--spring);
+}
+.who-pick button:hover { border-color: var(--bone); }
+.who-pick button:active { transform: translateY(1px); }
+.who-pick b { font-size: 1.05rem; }
+.who-pick span { font-size: 0.85rem; color: var(--ash); line-height: 1.45; }
+
 @keyframes ping { from { opacity: 0.9; transform: scale(1); } to { opacity: 0; transform: scale(2.3); } }
 
 /* Pass strip */
@@ -335,12 +378,13 @@ a { color: var(--bone); text-underline-offset: 0.18em; text-decoration-color: va
   .top-actions .btn-solid { margin-left: 0; }
   .slider-hint { display: none; }
   .check .two { grid-template-columns: 1fr; }
+  .who-pick { grid-template-columns: 1fr; }
   .check { padding: 1.25rem 1.1rem 1.5rem; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::after { transition: none !important; animation: none !important; } }
 
 @media print {
-  .top, .mapwrap, .strip, .views, #overview, .card-actions, .back, .home-pin { display: none !important; }
+  .top, .mapwrap, .strip, .views, #overview, .card-actions, .back, .home-pin, .exit-pin, .clear-pin { display: none !important; }
   :root { --recess: #f4f4f5; --sheet: #fff; --bone: #18181b; --ash: #52525b; --seam: #d4d4d8; --cinder: #b93620; --cinder-wash: #fbe9e5; }
   html { color-scheme: light; }
   body { display: block; background: #fff; height: auto; }

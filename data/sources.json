@@ -79,6 +79,16 @@
     "title": "Bradeen Hill: OpenStreetMap roads and place names",
     "url": "https://overpass-api.de/api/interpreter"
   },
+  "bradeen-hill/osm_basins": {
+    "bytes": 287,
+    "file": "data/raw/bradeen-hill/osm_basins.json",
+    "licence": "ODbL 1.0, (c) OpenStreetMap contributors",
+    "note": "Checked for mapped debris or detention basins inside the map window.",
+    "retrieved": "2026-11-15",
+    "status": "ok",
+    "title": "Bradeen Hill: OpenStreetMap basins",
+    "url": "https://overpass-api.de/api/interpreter"
+  },
   "bradeen-hill/usa_structures": {
     "bytes": null,
     "file": null,
@@ -177,6 +187,16 @@
     "retrieved": "2026-11-14",
     "status": "ok",
     "title": "East Evans Creek: OpenStreetMap roads and place names",
+    "url": "https://overpass-api.de/api/interpreter"
+  },
+  "east-evans-creek/osm_basins": {
+    "bytes": 287,
+    "file": "data/raw/east-evans-creek/osm_basins.json",
+    "licence": "ODbL 1.0, (c) OpenStreetMap contributors",
+    "note": "Checked for mapped debris or detention basins inside the map window.",
+    "retrieved": "2026-11-15",
+    "status": "ok",
+    "title": "East Evans Creek: OpenStreetMap basins",
     "url": "https://overpass-api.de/api/interpreter"
   },
   "east-evans-creek/usa_structures": {

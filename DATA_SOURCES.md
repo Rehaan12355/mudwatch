@@ -14,6 +14,7 @@ is unavailable the site says so instead of showing a value.
 | `bradeen-hill/opera_dist_alert_s1` | Bradeen Hill: NASA OPERA L3 DIST-ALERT-S1 v1 availability check | 2026-11-14 | n/a | NASA open data (CC0) | not yet available for this fire |
 | `bradeen-hill/opera_rtc_s1` | Bradeen Hill: NASA OPERA L2 RTC-S1 v1 radar backscatter, 29 Sentinel-1 passes 20260529 to 20261108, study-window subset | 2026-11-14 | n/a | NASA open data (CC0); contains modified Copernicus Sentinel-1 data, ESA | ok |
 | `bradeen-hill/osm` | Bradeen Hill: OpenStreetMap roads and place names | 2026-11-14 | 1.00 MB | ODbL 1.0, (c) OpenStreetMap contributors | ok |
+| `bradeen-hill/osm_basins` | Bradeen Hill: OpenStreetMap basins | 2026-11-15 | 0.00 MB | ODbL 1.0, (c) OpenStreetMap contributors | ok |
 | `bradeen-hill/usa_structures` | Bradeen Hill: USA Structures building inventory (FEMA and Oak Ridge National Laboratory) | 2026-11-14 | n/a | Public domain (US Government work) | ok |
 | `bradeen-hill/usgs_pwfdf` | Bradeen Hill: USGS post-wildfire debris-flow hazard assessment, Bradeen Hill_2026-07-25_v1.0 | 2026-11-14 | 0.44 MB | US Government work, public domain | ok |
 | `east-evans-creek/census_blocks` | East Evans Creek: 2020 Census blocks with population and housing units | 2026-11-14 | n/a | US Government work, public domain | ok |
@@ -24,6 +25,7 @@ is unavailable the site says so instead of showing a value.
 | `east-evans-creek/opera_dist_alert_s1` | East Evans Creek: NASA OPERA L3 DIST-ALERT-S1 v1 availability check | 2026-11-14 | n/a | NASA open data (CC0) | not yet available for this fire |
 | `east-evans-creek/opera_rtc_s1` | East Evans Creek: NASA OPERA L2 RTC-S1 v1 radar backscatter, 74 Sentinel-1 passes 20260512 to 20261111, study-window subset | 2026-11-14 | n/a | NASA open data (CC0); contains modified Copernicus Sentinel-1 data, ESA | ok |
 | `east-evans-creek/osm` | East Evans Creek: OpenStreetMap roads and place names | 2026-11-14 | 3.43 MB | ODbL 1.0, (c) OpenStreetMap contributors | ok |
+| `east-evans-creek/osm_basins` | East Evans Creek: OpenStreetMap basins | 2026-11-15 | 0.00 MB | ODbL 1.0, (c) OpenStreetMap contributors | ok |
 | `east-evans-creek/usa_structures` | East Evans Creek: USA Structures building inventory (FEMA and Oak Ridge National Laboratory) | 2026-11-14 | n/a | Public domain (US Government work) | ok |
 | `east-evans-creek/usgs_pwfdf` | East Evans Creek: USGS post-wildfire debris-flow hazard assessment, East Evans Creek_2026-07-10_v1.0 | 2026-11-14 | 1.09 MB | US Government work, public domain | ok |
 | `three-queens/usgs_pwfdf` | Three Queens: USGS post-wildfire debris-flow hazard assessment, Three Queens_2026-07-16_v1.0 | 2026-11-14 | 0.74 MB | US Government work, public domain | ok |
@@ -46,6 +48,8 @@ is unavailable the site says so instead of showing a value.
   Short name OPERA_L2_RTC-S1_V1 at the Alaska Satellite Facility DAAC (Earthdata login). VH, VV and mask layers of 88 burst files on tracks 093, 166; only the study window was read (50 MB kept in data/work/bradeen-hill/rtc/).
 - **`bradeen-hill/osm`**: <https://overpass-api.de/api/interpreter>  
   Used to label blocks with a road and a nearby place, and to measure road length inside mud paths.
+- **`bradeen-hill/osm_basins`**: <https://overpass-api.de/api/interpreter>  
+  Checked for mapped debris or detention basins inside the map window.
 - **`bradeen-hill/usa_structures`**: <https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0>  
   3155 buildings in and around the study window; occupancy class and centre point used.
 - **`bradeen-hill/usgs_pwfdf`**: <https://www.sciencebase.gov/catalog/item/6aaaef531ba49b8ae256e816>  
@@ -66,6 +70,8 @@ is unavailable the site says so instead of showing a value.
   Short name OPERA_L2_RTC-S1_V1 at the Alaska Satellite Facility DAAC (Earthdata login). VH, VV and mask layers of 238 burst files on tracks 013, 035, 115, 137; only the study window was read (261 MB kept in data/work/east-evans-creek/rtc/).
 - **`east-evans-creek/osm`**: <https://overpass-api.de/api/interpreter>  
   Used to label blocks with a road and a nearby place, and to measure road length inside mud paths.
+- **`east-evans-creek/osm_basins`**: <https://overpass-api.de/api/interpreter>  
+  Checked for mapped debris or detention basins inside the map window.
 - **`east-evans-creek/usa_structures`**: <https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0>  
   14928 buildings in and around the study window; occupancy class and centre point used.
 - **`east-evans-creek/usgs_pwfdf`**: <https://www.sciencebase.gov/catalog/item/6af460821ba49b1bd080d887>  

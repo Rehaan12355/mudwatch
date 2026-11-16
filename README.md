@@ -82,6 +82,7 @@ Sinking Cities; the data layers are new.
 | `s04_slope.py` | NASADEM elevation and slope |
 | `s05_people.py` | 2020 Census blocks, USA Structures buildings, OpenStreetMap names and roads |
 | `s06_zones.py` | Red zones (burned and steep), the paths below them, homes and people in the way, for every pass |
+| `s06b_routes.py` | Ways out by road for every flagged home, and the points where a mud path meets a public road |
 | `s07_usgs.py` | Basin-by-basin comparison with the USGS assessment |
 | `s08_nisar.py` | NISAR GCOV L-band backscatter before and after |
 | `s09_optical.py` | The haziest NASA HLS true-colour view in the three weeks after ignition |
@@ -113,6 +114,25 @@ Press **Play the story**. It runs the handout's sequence with real data:
 4. Slope switches on and steep burned hills turn red.
 5. People switches on and the homes below light up, with a count.
 6. The USGS map, side by side.
+
+## Two kinds of visitor
+
+The site asks who is using the map when it opens, and the choice can be changed in
+the header.
+
+- **Resident and first responder** both see the ways out by road: the shortest drive
+  on the OpenStreetMap road network from each flagged home to a main road at least
+  1 km clear of every mapped mud path. Road inside a path is drawn dashed. On both
+  fires every way out runs through at least one possible mud path, which is the
+  reason to leave before the rain.
+- **First responder** also sees clearing points: where a mud channel crosses a
+  public road, ranked by ways out first and then by the steep burned ground that
+  drains to the crossing. There are 17 on East Evans Creek and 11 on Bradeen Hill.
+
+Neither is an official product. No public evacuation-route map or debris-basin
+inventory exists for these fires, and OpenStreetMap maps no basins in either
+window, so both are worked out from the road map and the mud paths, and the site
+says so wherever they appear.
 
 ## Limits
 

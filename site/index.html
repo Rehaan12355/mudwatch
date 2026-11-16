@@ -9,13 +9,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
-<link href="styles.css" rel="stylesheet">
+<link href="styles.css?v=20261115d" rel="stylesheet">
 </head>
 <body class="loading">
 <header class="top">
   <a class="brand" href="./"><svg viewBox="0 0 22 22" width="22" height="22" aria-hidden="true"><path d="M11 3 20 8l-9 5-9-5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="m2 11.5 9 5 9-5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" opacity=".6"/><path d="m2 15 9 5 9-5" fill="none" stroke="#e5482d" stroke-width="1.6" stroke-linejoin="round"/></svg>Mudwatch</a>
   <span class="place" id="place"></span>
   <nav class="top-actions">
+    <button id="role-btn" class="link" type="button"></button>
     <button id="open-check" class="link" type="button">Check the science</button>
     <a class="link" href="methods.html">How it works</a>
     <button id="story" class="btn btn-solid" type="button"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 2.5v11l9.5-5.5z" fill="currentColor"/></svg>Play the story</button>
@@ -50,12 +51,16 @@
             <i class="plate p-burn"></i><i class="plate p-slope"></i><i class="plate p-people"></i><i class="core"></i>
           </div>
           <div class="stack-keys">
-            <button type="button" class="layer" data-layer="burn" aria-pressed="true"><b>Burned area</b><span>Where did the fire burn?</span></button>
+            <button type="button" class="layer" data-layer="burn" aria-pressed="false"><b>Burned area</b><span>Where did the fire burn?</span></button>
             <button type="button" class="layer" data-layer="slope" aria-pressed="false"><b>Steep ground</b><span>Is it steep enough to slide?</span></button>
             <button type="button" class="layer" data-layer="people" aria-pressed="false"><b>Homes</b><span>Who lives below?</span></button>
           </div>
         </div>
         <p id="stack-says" class="stack-says"></p>
+      </div>
+
+      <div id="routes-switch">
+        <button type="button" class="layer" id="routes-toggle" aria-pressed="false"><b>Evacuation routes</b><span>Which road leads out?</span></button>
       </div>
 
       <div id="answer">
@@ -72,6 +77,18 @@
         <ol id="rank" class="rank"></ol>
         <div id="extra"></div>
         <p id="rank-note" class="hint"></p>
+
+        <div id="ways" hidden>
+          <h2>Evacuation routes by road</h2>
+          <ol id="ways-list" class="rank"></ol>
+          <p id="ways-note" class="hint"></p>
+        </div>
+        <div id="clear" hidden>
+          <h2>Where to clear before the rain</h2>
+          <p id="clear-lede" class="hint"></p>
+          <ol id="clear-list" class="rank"></ol>
+          <p id="clear-note" class="hint"></p>
+        </div>
       </div>
     </section>
 
@@ -95,12 +112,27 @@
   </div>
 </footer>
 
+<dialog id="who" class="who" aria-labelledby="who-title">
+  <h2 id="who-title">Who is using the map?</h2>
+  <p>Both views show the homes at risk and the ways out by road. Pick the one that fits. You can switch at any time with the button at the top.</p>
+  <div class="who-pick">
+    <button type="button" data-role="resident">
+      <svg viewBox="0 0 16 16" width="26" height="26" aria-hidden="true"><path d="M8 2.2 1.8 7.6h1.7v5.9h3.3V9.9h2.4v3.6h3.3V7.6h1.7z" fill="currentColor"/></svg>
+      <b>I live here</b><span>See if your home is at risk and which road to take out.</span>
+    </button>
+    <button type="button" data-role="responder">
+      <svg viewBox="0 0 16 16" width="26" height="26" aria-hidden="true"><path d="M10.5 2.5l3 3M12 4 7.2 8.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M5.3 7.6 8.4 10.7 6.6 12.5c-1.2 1.2-3 1.3-3.9.9-.4-.9-.3-2.7.9-3.9z" fill="currentColor"/></svg>
+      <b>I am a first responder</b><span>Also see where mud could block a road, so crews can clear it first.</span>
+    </button>
+  </div>
+</dialog>
+
 <dialog id="check" class="check">
   <form method="dialog"><button class="btn close" aria-label="Close">Close</button></form>
   <div id="check-body"></div>
 </dialog>
 
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<script src="app.js"></script>
+<script src="app.js?v=20261115d"></script>
 </body>
 </html>

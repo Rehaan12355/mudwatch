@@ -72,6 +72,16 @@ warm greys mixed with cool greys. Printing a card switches to dark ink on white 
   everyday words: "Burned area", "Steep ground", "Homes", "satellite pass".
 - **Home marker:** a real button on the map. Selecting it opens that home's block
   card; hover and selection invert it to white.
+- **Who is using the map:** a dialog every time the site opens, with two choices, resident or
+  first responder, remembered between visits. A header link switches straight to the other
+  role and is worded as the action: "Switch to first responder" or "Switch to resident".
+- **Evacuation routes switch:** one switch in the same style as the layer switches,
+  under the stack and above the answer. Off by default.
+- **Ways out:** Bone lines over a Soot casing, dashed where the road lies in a
+  possible mud path, ending in a Bone pill that names the road. Never Cinder.
+- **Clearing point (first responder only):** a 28px Raised rounded square with a
+  Bone rim and shovel glyph, so it cannot be mistaken for a round home marker.
+  Selecting one opens a small note on the map; nothing opens on hover.
 - **Layer stack (signature):** three plates drawn in isometric projection, stacked
   with air between them: Burn scar, Slope, People. Each plate is a toggle button with
   its name and the question it answers beside it. An off plate is an outline; an on

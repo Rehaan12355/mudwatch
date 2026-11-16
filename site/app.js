@@ -17,9 +17,9 @@
   const asked = new URLSearchParams(location.search).get("fire");
   const fid = fires.some((f) => f.id === asked) ? asked : fires[0].id;
   const D = `data/${fid}/`;
-  const [fire, blocks, homes, perimeter, basins, segments, layersImg, terrainImg] = await Promise.all([
+  const [fire, blocks, homes, perimeter, basins, segments, routes, clearPts, layersImg, terrainImg] = await Promise.all([
     loadJson(D + "fire.json"), loadJson(D + "blocks.geojson"), loadJson(D + "homes.geojson"), loadJson(D + "perimeter.geojson"),
-    loadJson(D + "usgs_basins.geojson"), loadJson(D + "usgs_segments.geojson"), loadImage(D + "layers.png"), loadImage(D + "terrain.png"),
+    loadJson(D + "usgs_basins.geojson"), loadJson(D + "usgs_segments.geojson"), loadJson(D + "routes.geojson"), loadJson(D + "clear_points.geojson"), loadImage(D + "layers.png"), loadImage(D + "terrain.png"),
   ]);
   const T = fire.timeline, K = T.length, tot = fire.totals, C = fire.usgs_check, N = fire.nisar && fire.nisar.ok ? fire.nisar : null;
   const byId = new Map(blocks.features.map((f) => [f.properties.id, f.properties]));
@@ -28,10 +28,15 @@
   const SAT = { S1A: "Sentinel-1A", S1C: "Sentinel-1C", S1D: "Sentinel-1D" };
   const ICON = {
     play: '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 2.5v11l9.5-5.5z" fill="currentColor"/></svg>',
+    shovel: '<svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M10.5 2.5l3 3M12 4 7.2 8.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M5.3 7.6 8.4 10.7 6.6 12.5c-1.2 1.2-3 1.3-3.9.9-.4-.9-.3-2.7.9-3.9z" fill="currentColor"/></svg>',
+    out: '<svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     pause: '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z" fill="currentColor"/></svg>',
   };
 
-  const state = { view: "watch", idx: K - 1, fade: 100, layers: { burn: true, slope: true, people: true }, selected: null, playing: null };
+  const WO = fire.ways_out, miles = (km) => (km * 0.621).toFixed(1);
+  // Who is looking: a resident, or a first responder who also gets the clearing points. Remembered between visits.
+  const store = { get: () => { try { return localStorage.getItem("mudwatch-role"); } catch (e) { return null; } }, set: (v) => { try { localStorage.setItem("mudwatch-role", v); } catch (e) { /* private window */ } } };
+  const state = { role: store.get() === "responder" ? "responder" : "resident", view: "watch", idx: K - 1, fade: 100, layers: { burn: false, slope: false, people: false }, routes: false, selected: null, playing: null };
   const all = () => state.layers.burn && state.layers.slope && state.layers.people;
   document.title = `Mudwatch: ${fire.name}`;
   if (fires.length > 1) {
@@ -146,6 +151,11 @@
   add({ id: "perimeter", type: "line", source: "perimeter", layout: { visibility: "none" }, paint: { "line-color": BONE, "line-width": 1.4, "line-dasharray": [3, 2], "line-opacity": 0.9 } });
   add({ id: "block-fill", type: "fill", source: "blocks", paint: { "fill-color": "#000", "fill-opacity": 0 } });
   add({ id: "block-line", type: "line", source: "blocks", paint: { "line-color": "#ffffff", "line-opacity": 0.1, "line-width": 0.6 } });
+  // Ways out by road: white, and dashed where the road lies in a possible mud path.
+  map.addSource("routes", { type: "geojson", data: routes });
+  map.addLayer({ id: "routes-case", type: "line", source: "routes", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#0e0e10", "line-width": 7, "line-opacity": 0.75 } });
+  map.addLayer({ id: "routes", type: "line", source: "routes", filter: ["==", ["get", "cut"], 0], layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": BONE, "line-width": 3.4 } });
+  map.addLayer({ id: "routes-cut", type: "line", source: "routes", filter: ["==", ["get", "cut"], 1], paint: { "line-color": BONE, "line-width": 3.4, "line-dasharray": [0.9, 0.9] } });
   map.addLayer({ id: "homes", type: "circle", source: "homes", paint: { "circle-radius": 2 } });
   map.addLayer({ id: "block-selected", type: "line", source: "blocks", paint: { "line-color": BONE, "line-width": 3 }, filter: ["==", "id", ""] });
   // Homes in a possible mud path get a marker of their own, so they are the first thing anyone sees.
@@ -157,6 +167,23 @@
     el.onclick = (ev) => { ev.stopPropagation(); stop(); select(f.properties.b); };
     new maplibregl.Marker({ element: el }).setLngLat(f.geometry.coordinates).addTo(map);
     return { el, k: f.properties.k, b: f.properties.b };
+  });
+  const exits = WO.routes.map((r) => {
+    const el = document.createElement("button");
+    el.type = "button"; el.className = "exit-pin"; el.innerHTML = `${ICON.out}<span>Way out: ${r.to || "main road"}</span>`;
+    el.onclick = (ev) => { ev.stopPropagation(); stop(); showRoute(r.id); };
+    new maplibregl.Marker({ element: el, anchor: "left", offset: [6, 0] }).setLngLat(r.end).addTo(map);
+    return el;
+  });
+  // Clearing points, for first responders: where a mud channel crosses a public road.
+  let popup;
+  const clearPins = clearPts.features.map((f) => {
+    const el = document.createElement("button");
+    el.type = "button"; el.className = "clear-pin"; el.innerHTML = ICON.shovel;
+    el.setAttribute("aria-label", `Clearing point ${f.properties.rank}, ${f.properties.road}`);
+    el.onclick = (ev) => { ev.stopPropagation(); stop(); showClear(f.properties.rank); };
+    new maplibregl.Marker({ element: el }).setLngLat(f.geometry.coordinates).addTo(map);
+    return { el, f };
   });
   const show = (id, on) => map.getLayer(id) && map.setLayoutProperty(id, "visibility", on ? "visible" : "none");
   const fadeTo = (id, o) => map.getLayer(id) && map.setPaintProperty(id, "raster-opacity", o);
@@ -180,6 +207,14 @@
       p.el.style.display = !nisar && lit && p.k <= upto ? "" : "none";
       p.el.classList.toggle("sel", p.b === state.selected);
     }
+    const ways = state.view === "watch" && all() && state.routes;
+    $("routes-toggle").setAttribute("aria-pressed", String(state.routes));
+    $("routes-switch").hidden = state.view !== "watch";
+    for (const id of ["routes-case", "routes", "routes-cut"]) show(id, ways);
+    for (const el of exits) el.style.display = ways ? "" : "none";
+    const clearing = state.view === "watch" && all() && state.role === "responder";
+    for (const c of clearPins) c.el.style.display = clearing && state.role === "responder" && c.f.properties.k <= state.idx ? "" : "none";
+    if (popup && !clearing) { popup.remove(); popup = null; }
     // Homes beside a path get a ring; every other home stays a quiet dot.
     const beside = ["all", ["==", ["get", "near"], 1], lit];
     map.setPaintProperty("homes", "circle-color", ["case", beside, "#18181b", "#a1a1aa"]);
@@ -211,6 +246,8 @@
       h = `<b>${all() ? "How to read this map" : "Layers switched on"}</b>`;
       if (all()) h += key("background:#e5482d;box-shadow:0 0 0 2px #fff", "Home that mud could reach", "dot") + key("background:#18181b;box-shadow:0 0 0 1.6px #f4f4f5", "Home right beside a path", "dot")
         + key("background:rgba(229,72,45,0.45)", "Path mud could take downhill");
+      if (all() && state.routes && WO.routes.length) h += key("background:#f4f4f5;height:0.24rem;border-radius:2px", "Way out by road") + key("background:repeating-linear-gradient(90deg,#f4f4f5 0 4px,transparent 4px 8px);height:0.24rem;border-radius:0", "Way out that mud could cut");
+      if (all() && state.role === "responder" && clearPts.features.length) h += key("background:#29292d;box-shadow:0 0 0 1.5px #f4f4f5;border-radius:3px", "Clearing point: mud path meets a road");
       if (burn && slope) h += key("background:#e5482d", "Burned and steep hillside");
       if (burn) h += key("background:rgba(212,212,216,0.4)", "Burned area, seen by radar");
       if (slope) h += key("background:repeating-linear-gradient(135deg,rgba(244,244,245,0.8) 0 1.5px,transparent 1.5px 5px)", `Steep ground (${fire.steep_deg}° or more)`);
@@ -308,6 +345,7 @@
     const rows = blocks.features.map((f) => f.properties);
     $("rank").innerHTML = ""; $("extra").innerHTML = ""; $("rank-note").textContent = ""; $("rank-title").textContent = "";
     $("how").hidden = $("find").hidden = state.view !== "watch";
+    renderWays();
     if (state.view === "nisar") {
       $("headline").textContent = "NISAR sees the scar too";
       $("subhead").textContent = `NISAR is the NASA and ISRO radar this challenge is built around. Its long L-band waves reach into the canopy, so burned forest goes dark. Drag the slider to fade from before the fire to after.`;
@@ -354,6 +392,51 @@
     }
   }
 
+  const routeName = (r) => `${r.via || "Local roads"}, heading ${r.heading}`;
+  const routeEnd = (r) => (r.to && r.to !== r.via ? `to ${r.to}` : "to a stretch clear of the mud paths") + (r.place ? `, near ${r.place.name}` : "");
+  const crosses = (r) => `runs through ${r.crossings} possible mud ${r.crossings === 1 ? "path" : "paths"}`;
+  function renderWays() {
+    const on = state.view === "watch" && all();
+    $("ways").hidden = !on || !state.routes || !WO.routes.length;
+    $("clear").hidden = !on || state.role !== "responder";
+    if (!on) return;
+    $("ways-list").innerHTML = WO.routes.map((r, i) => `<li style="--i:${i}"><button type="button" data-route="${r.id}">
+        <span class="rank-name">${routeName(r)}</span>
+        <span class="rank-when plain">${miles(r.km)} mi</span>
+        <span class="rank-sub">${routeEnd(r)}. Used by ${r.homes} of the flagged homes. ${r.crossings ? `It ${crosses(r)}, so leave before heavy rain.` : "It stays clear of the mapped mud paths."}</span>
+      </button></li>`).join("");
+    $("ways-note").textContent = `These are not official evacuation routes. Each is the shortest drive on the OpenStreetMap road map from a flagged home to a main road at least ${WO.rule.clear_m / 1000} km clear of every mapped mud path. Dashed stretches lie in a possible mud path. If officials name a route, take theirs.`;
+    if (state.role !== "responder") return;
+    const pts = clearPts.features.map((f) => f.properties).filter((p) => p.k <= state.idx);
+    $("clear-lede").textContent = pts.length
+      ? `${pts.length} places where a possible mud path meets a public road. A plugged culvert or ditch there could send mud across the road. Ways out are listed first, then the largest burned slopes.`
+      : `No possible mud path had reached a public road by ${day(T[state.idx].date)}.`;
+    $("clear-list").innerHTML = pts.map((p, i) => `<li style="--i:${i}"><button type="button" data-clear="${p.rank}">
+        <span class="rank-name"><i class="num">${p.rank}</i>${p.road}</span>
+        <span class="rank-when plain">${fmt(p.ha * 2.471)} ac</span>
+        <span class="rank-sub">of steep burned ground drain to this ${p.kind === "basin" ? "basin" : "crossing"}${p.on_route ? ". On a way out" : ""}</span>
+      </button></li>`).join("");
+    $("clear-note").textContent = `There is no public map of debris basins for this fire${WO.osm_basins_checked ? `, and OpenStreetMap shows ${WO.osm_basins_found || "none"} in this area` : ""}. These points are worked out instead: each is where a mud channel on this map crosses a public road, with crossings closer than ${WO.rule.cluster_m} m counted once. Check them on the ground before sending a crew.`;
+  }
+  function showRoute(id) {
+    const b = new maplibregl.LngLatBounds();
+    for (const f of routes.features) if (f.properties.r === id) (function walk(c) { typeof c[0] === "number" ? b.extend(c) : c.forEach(walk); })(f.geometry.coordinates);
+    if (!b.isEmpty()) map.fitBounds(b, { padding: 90, maxZoom: 14, duration: 1400 });
+  }
+  function showClear(rank, fly) {
+    const f = clearPts.features.find((c) => c.properties.rank === rank), p = f.properties;
+    popup?.remove();
+    popup = new maplibregl.Popup({ offset: 18, closeButton: true, maxWidth: "260px" }).setLngLat(f.geometry.coordinates)
+      .setHTML(`<b>Clearing point ${p.rank}: ${p.road}</b><p>${fmt(p.ha * 2.471)} acres of steep burned ground drain to this ${p.kind === "basin" ? "basin" : "road crossing"}. First mapped on ${day(T[p.k].date)}.${p.on_route ? " It is on a way out for flagged homes." : ""}</p><p class="small">Clear the culvert, ditch and channel here before heavy rain. Worked out from the map, not surveyed.</p>`).addTo(map);
+    if (fly) map.flyTo({ center: f.geometry.coordinates, zoom: Math.max(map.getZoom(), 13.5), duration: 1200 });
+  }
+  function setRole(r, keep = true) {
+    state.role = r;
+    if (keep) store.set(r);
+    $("role-btn").textContent = r === "responder" ? "Switch to resident" : "Switch to first responder";
+    render();
+  }
+
   const todo = () => `<ol>
       <li>Sign up for ${fire.county} emergency alerts and keep emergency alerts switched on in your phone.</li>
       <li>Watch the forecast. The National Weather Service in ${fire.nws_office} issues Flash Flood Watches and Warnings for burn scars: <a href="${fire.nws_url}" target="_blank" rel="noopener">weather.gov</a>.</li>
@@ -378,6 +461,8 @@
     }[p.status];
     const flagged = p.k >= 0 ? `<div><dt>First flagged</dt><dd><span class="big">${day(T[p.k].date)}</span><span class="small">day ${daysBetween(fire.dates.ignition, T[p.k].date)} after the fire started, on radar pass ${p.k + 1}</span></dd></div>` : "";
     const up = p.up_ha >= 1 ? `<div><dt>Steep burned ground upstream</dt><dd><span class="big">${fmt(p.up_ha * 2.471)} acres</span><span class="small">drain past the most exposed home here</span></dd></div>` : "";
+    const rt = p.route >= 0 ? WO.routes[p.route] : null;
+    const wayOut = rt ? `<div><dt>Way out by road</dt><dd><span class="big">${routeName(rt)}</span><span class="small">about ${miles(p.route_km)} miles ${routeEnd(rt)}. ${rt.crossings ? `It ${crosses(rt)}, so leave before heavy rain.` : ""} Not an official evacuation route. <button type="button" class="inline" id="see-route">Show it on the map</button></span></dd></div>` : "";
     card.innerHTML = `
       <button class="btn back" type="button" id="back">Back to the map summary</button>
       <h1>${p.name}</h1>
@@ -386,7 +471,7 @@
       <dl class="facts">
         <div><dt>Homes in a possible mud path</dt><dd><span class="big ${p.homes_in ? "hot" : ""}">${p.homes_in} of ${p.homes}</span><span class="small">${p.homes_in ? `about ${p.people_in} ${p.people_in === 1 ? "person" : "people"}, ` : ""}as of the ${latest} radar pass</span></dd></div>
         <div><dt>Homes beside one</dt><dd><span class="big">${p.homes_near}</span><span class="small">within ${fire.rule.near_path_m} meters of a path</span></dd></div>
-        ${up}${flagged}
+        ${up}${flagged}${wayOut}
         <div><dt>People living here</dt><dd><span class="big">${fmt(p.pop)}</span><span class="small">2020 Census, whole block</span></dd></div>
       </dl>
       <div class="say"><h3>What this means</h3>${S[1]}</div>
@@ -395,6 +480,7 @@
     $("back").onclick = () => select(null);
     $("print").onclick = () => window.print();
     $("csv").onclick = downloadCsv;
+    if (rt) $("see-route").onclick = () => { state.routes = true; renderMap(); renderLegend(); showRoute(rt.id); };
   }
 
   function downloadCsv() {
@@ -432,7 +518,8 @@
 
   /* ---------- interaction ---------- */
   document.querySelectorAll(".views button").forEach((b) => (b.onclick = () => { stop(); select(null); setView(b.dataset.view); }));
-  document.querySelectorAll(".layer").forEach((b) => {
+  $("routes-toggle").onclick = () => { stop(); state.routes = !state.routes; render(); };
+  document.querySelectorAll(".layer[data-layer]").forEach((b) => {
     const plate = document.querySelector(`.p-${b.dataset.layer}`);
     b.onclick = () => { stop(); setLayers({ [b.dataset.layer]: !state.layers[b.dataset.layer] }); };
     b.onmouseenter = () => plate.classList.add("lift");
@@ -451,6 +538,10 @@
     renderMap(); renderStack(); renderBar();
     if (!state.selected) renderOverview();
   };
+  $("ways-list").onclick = (ev) => { const b = ev.target.closest("button[data-route]"); if (b) showRoute(+b.dataset.route); };
+  $("clear-list").onclick = (ev) => { const b = ev.target.closest("button[data-clear]"); if (b) showClear(+b.dataset.clear, true); };
+  $("role-btn").onclick = () => { stop(); setRole(state.role === "responder" ? "resident" : "responder"); };
+  $("who").addEventListener("click", (ev) => { const b = ev.target.closest("button[data-role]"); if (b) { setRole(b.dataset.role); $("who").close(); } });
   $("rank").onclick = (ev) => { const b = ev.target.closest("button[data-id]"); if (b) select(b.dataset.id, true); };
   map.on("click", "block-fill", (ev) => { stop(); select(ev.features[0].properties.id); });
   map.on("mouseenter", "block-fill", () => (map.getCanvas().style.cursor = "pointer"));
@@ -604,7 +695,9 @@
   $("open-check").onclick = () => { $("check-body").innerHTML = checkHtml(); $("check").showModal(); };
 
   setView("watch");
+  setRole(state.role, false);
   document.body.classList.remove("loading");
+  $("who").showModal();   // asked on every visit; the last answer is the default if the dialog is dismissed
 })().catch((err) => {
   console.error(err);
   document.body.classList.remove("loading");
