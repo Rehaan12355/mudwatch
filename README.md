@@ -2,6 +2,16 @@
 
 **NASA Space Apps Challenge 2026 · Seattle · "Dancing with the SARs"**
 
+**Winner of the Local Impact Award at NASA Space Apps Seattle 2026.**
+
+The headline result is the East Evans Creek Fire in Jackson County, Oregon. Radar
+mapped its burn scar through the smoke eight days after it started, and Mudwatch
+found 17 homes, about 43 people, sitting in a possible mud path below the steep
+burned hills. It flagged the first of those homes on July 18, 116 days before the
+date on the USGS expert assessment, and the two agree on 119 of 150 basins.
+
+Live site: <https://rehaan12355.github.io/mudwatch/>
+
 After a wildfire, the next heavy rain can bury homes in mud. Mudwatch uses radar
 satellites to show which homes sit below fresh burn scars on steep slopes, fast enough
 to warn people before the rain comes.
@@ -20,6 +30,10 @@ The fire started on July 10, 2026. Every figure below is produced by the pipelin
 - **17 homes, about 43 people, sit in a possible mud path** below those slopes, and 17
   more homes are within 100 m of one. 6.2 km of public road run through the paths,
   most of it East Evans Creek Road.
+- **Every way out crosses a possible mud path.** The flagged homes leave along East
+  Evans Creek Road, in either direction, or along Antioch Road, and each route runs
+  through at least one path, so the advice is to leave before the rain. The map marks 17
+  points where a mud channel meets a public road, for crews to clear first.
 - **It agrees with the experts.** The USGS assessment of the same fire is dated
   November 11, 116 days after our first flagged home. Basin by basin, our red-zone
   share ranks the same way as the USGS terrain term (Spearman 0.71), and 119 of 150
