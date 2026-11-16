@@ -19,6 +19,19 @@ to warn people before the rain comes.
 One map, three stacked layers: burn scar, slope, people. Where all three line up, the
 map turns red.
 
+## At a glance
+
+| | East Evans Creek, OR | Bradeen Hill, WA |
+|---|---|---|
+| Fire started | July 10, 2026 | July 25, 2026 |
+| First radar-confirmed scar | July 18 (day 8) | August 11 (day 17) |
+| Radar-confirmed scar | 6,983 acres, 49 passes | 1,011 acres, 18 passes |
+| Burned and 23° or steeper | 1,271 acres | 139 acres |
+| Homes in a possible mud path | 17 (about 43 people) | 11 (about 28 people) |
+| Lead over the USGS assessment | 116 days | 24 days |
+| Basins agreeing with USGS | 119 of 150 | 42 of 54 |
+| NISAR L-band HV drop over scar | 3.3 dB | 3.0 dB |
+
 ## What it found: East Evans Creek Fire, Jackson County, Oregon
 
 The fire started on July 10, 2026. Every figure below is produced by the pipeline.
